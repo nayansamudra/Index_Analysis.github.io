@@ -124,6 +124,10 @@ Range Slider
 .irs-grid-text {
   font-size: 14px;
 }
+.irs--flat .irs-min,
+.irs--flat .irs-max{
+  color: #2e2e2e;
+}
 .irs--flat .irs-handle {
   top: 28px !important;
   width: 20px;
