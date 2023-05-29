@@ -1,27 +1,11 @@
 root = "https://apii.tradingcafeindia.com"
-user = "dknaix@gmail.com"
-user_1 = "samudragupta201@gmail.com"
-
-// Auth User
-function Auth_User(auth) {
-  $.post(
-    root + "/tc_indicator/auth",
-    { email: auth },
-    function (data, status) {
-      console.log(data)
-      Auth_status = status;
-    }
-  ).fail(function (response) {
-    console.log('Error: ' + response);
-  });
-}
 
 // Expiry API
 function call_Expiry_API(script) {
   try {
     $.post(
       root + "/get_running_expiry",
-      { script: script },
+      { script: script, email: "samudragupta201@gmail.com", auth: abc },
       function (data, status) {
         Expiry_data = data;
       }
@@ -29,8 +13,8 @@ function call_Expiry_API(script) {
       console.log('Error: ' + response);
     });
     console.log("API FUNCTION CALL");
-    var x = moment.unix(Expiry_data[0][0]).format("MMM-D");
-    var y = moment.unix(Expiry_data[1][0]).format("MMM-D");
+    let x = moment.unix(Expiry_data[0][0]).format("MMM-DD");
+    let y = moment.unix(Expiry_data[1][0]).format("MMM-DD");
     $("#1st_dropdown_value").attr("value", x);
     $("#2nd_dropdown_value").attr("value", y);
     $("#1st_dropdown_value").text(x + " " + Expiry_data[0][1]);
@@ -45,28 +29,42 @@ function call_Expiry_API(script) {
 
 $(document).ready(function () {
 
-  // console.log = function () { };
+  console.log = function () { };
 
   $.ajaxSetup({ async: false }); // to stop async
 
-  Auth_User(user_1)
+  abc = "";
+  function Auth_User(auth) {
+    $.post(
+      root + "/auth",
+      { email: auth },
+      function (data, status) {
+        abc = data 
+      }
+    ).fail(function (response) {
+      console.log('Error: ' + response);
+    });
+  }
+  Auth_User("samudragupta201@gmail.com")
+  console.log("User: ", abc)
+
   call_Expiry_API("NIFTY 50");
 
   $(".js-range-slider").ionRangeSlider({
     type: "double",
     grid: true,
     min: ((9 * 60) + 20) * 60000,
-    max: ((15 * 60) + 30) * 60000, 
+    max: ((15 * 60) + 30) * 60000,
     from: ((9 * 60) + 20) * 60000, // 9:20 in milliseconds
     to: ((15 * 60) + 30) * 60000, // 15:30 in milliseconds
     force_edges: !0,
-		grid_num: 12,
-		step: 3e5,
-		min_interval: 3e5,
+    grid_num: 12,
+    step: 3e5,
+    min_interval: 3e5,
     prettify: function (value) {
       // Convert milliseconds to formatted time string
-      var hours = Math.floor((value / (1000 * 60 * 60)) % 24);
-      var minutes = Math.floor((value / (1000 * 60)) % 60);
+      let hours = Math.floor((value / (1000 * 60 * 60)) % 24);
+      let minutes = Math.floor((value / (1000 * 60)) % 60);
       return hours.toString().padStart(2, "0") + ":" + minutes.toString().padStart(2, "0");
     }
   });
