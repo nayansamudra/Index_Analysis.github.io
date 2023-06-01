@@ -55,23 +55,6 @@
   fill: white;
 }
 
-.top_arrow {
-  z-index: 12;
-  text-align: center;
-  position: fixed;
-  top: 90%;
-  right: 20px;
-  margin-left: 5px;
-  border: 1px solid grey;
-  transition: 0.3s;
-  padding: 5px;
-  width: 40px;
-}
-
-.top_arrow:hover {
-  box-shadow: 0 0 10px #f8f9fa;
-}
-
 @media (max-width: 850px) {
   #Expiry {
     width: 120px !important;
@@ -125,7 +108,7 @@ Range Slider
   font-size: 14px;
 }
 .irs--flat .irs-min,
-.irs--flat .irs-max{
+.irs--flat .irs-max {
   color: #2e2e2e;
 }
 .irs--flat .irs-handle {
@@ -140,4 +123,57 @@ Range Slider
 }
 .irs--flat .irs-handle i {
   background-color: transparent !important;
+}
+
+/* -------
+Apexchart 
+------- */
+
+.apexcharts-menu-item {
+  color: #1c1c1c !important;
+}
+
+.apexcharts-tooltip.apexcharts-theme-light {
+  color: #1c1c1c !important;
+}
+
+.m-1 {
+  margin: 0.25rem !important;
+}
+.border-faint {
+  border-bottom: 1px solid #2e2e2e;
+}
+@media (max-width:992px) {
+  #strech_me {
+    margin-top: 0.5rem !important;
+    margin-left: 0 !important;
+  }
+}
+
+.cust_legend_heading::before{
+	position: relative;
+	bottom:-3px;
+	content: "•";
+	font-size:30px;
+ }
+#cust_legend_1_1,#cust_legend_2_1::before{color:#00d3c0}
+#cust_legend_1_2,#cust_legend_2_2::before {color:#ff5253}
+
+.cust_legend_value{
+	background-color: grey;
+	padding:1% 7%;
+	border-radius:15px;
+	font-weight: bold;
+}
+
+.h4 {
+  font-size: 1.125rem;
+}
+
+.h3 {
+  font-size: 1.525rem;
+}
+
+.donutchart {
+  min-height: 350px !important;
 }

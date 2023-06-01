@@ -40,12 +40,12 @@
             </div>
             <div class="col-2 col-md-1 ps-0 my-3 text-light d-flex justify-content-center align-items-center">
                 <button class="go_btn bg-color text-white font-weight-bold w-100 h-100 rounded" id="Submit"
-                    type="button">GO</button>
+                    type="button" onclick="fetch_data()">GO</button>
             </div>
         </div>
         <!-- Three Button -->
         <div class="row mx-2 my-2 bg-color rounded">
-            <div class="col-12 py-3 text-light" id="Button_Col">
+            <div class="col-12 px-0 py-3 text-light" id="Button_Col">
                 <div class="container-fluid">
                     <div class="row py-0 my-0">
                         <div class="col-md-8">
@@ -70,7 +70,7 @@
                         </div>
                         <div class="col-md-4" id="Expiry_Date">
                             <div class="row">
-                                <div class="mx-auto w-50">
+                                <div class="mx-auto w-100">
                                     <div class="pt-2 row text-center" id="Expiry_heading_span">
                                         <span class="font-weight-bold">Expiry</span>
                                     </div>
@@ -81,13 +81,85 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="mx-auto w-50 d-flex align-items-center justify-content-center">
+                                <!-- <div class="mx-auto w-50 d-flex align-items-center justify-content-center">
                                     <div class="pt-2 row" id="OTM_ONLY">
                                         <div class="col-12 px-0">
                                             <span class="font-weight-bold">OTM ONLY &nbsp;<input type="checkbox"
                                                     id="otm_chk"></span>
                                         </div>
                                     </div>
+                                </div> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Grouped Bar Chart -->
+        <div class="row my-2 mx-2">
+            <div class="col-lg-8 rounded bg-color px-2">
+                <div class="mx-2 row text-light font-weight-bold p-2 py-3 border-faint">
+                    <div class="col">
+                        <span class="h3">OI Compass</span>
+                    </div>
+                </div>
+                <div class="me-3" id="grouped_barchart"></div>
+            </div>
+            <div class="ms-2 col-lg rounded" id="strech_me" name="strech me on lg-breakpoint">
+                <div class="row border-faint bg-color rounded-top h-40">
+                    <div id="donutchart" class="col-6 donutchart"></div>
+                    <div class="col-6 text-light m-auto text-center">
+                        <div class="row">
+                            <div class="col-12 mt-1 p-0 mb-2">
+                                <span class="text-light font-weight-normal h3">Change in P/C </span>
+                            </div>
+                            <div class="col-12">
+                                <div class="cust_legend_heading h4" id="cust_legend_1_1">
+                                    Change PE OI
+                                </div>
+                                <div class="my-2">
+                                    <span class="cust_legend_value chg_pe h4"></span>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="cust_legend_heading h4" id="cust_legend_1_2">
+                                    Change CE OI
+                                </div>
+                                <div class="my-2">
+                                    <span class="cust_legend_value chg_ce h4"></span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row bg-color rounded-bottom h-40">
+                    <div id="donutchart1" class="col-6 donutchart my-auto"></div>
+                    <div class="col-6 text-light m-auto text-center">
+                        <div class="row">
+                            <div class="col-12 mt-1 mb-2 p-0">
+                                <span class="text-light font-weight-normal mb-1 h3">P/C Ratio Net</span>
+                            </div>
+                            <div class="col-12">
+                                <div class="cust_legend_heading h4" id="cust_legend_2_1">
+                                    Total PE OI
+                                </div>
+                                <div class="my-2">
+                                    <span class="cust_legend_value total_pe h4"></span>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="cust_legend_heading h4" id="cust_legend_2_2">
+                                    Total CE OI
+                                </div>
+                                <div class="my-2">
+                                    <span class="cust_legend_value total_ce h4"></span>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="mt-3 my-2">
+                                    <span class="cust_legend_value_2 h4"><b style="color:#6C7383">PCR:</b> <b
+                                            class="h3 pcr_net"></b></span>
                                 </div>
                             </div>
                         </div>
@@ -95,11 +167,19 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- Back to Top  -->
-    <div class="top_arrow bg-color" onclick="$('html, body').animate({ scrollTop: 0 },'slow');">
-        <i class="ti-angle-double-up text-light"></i>
+        <!-- Column Chart -->
+        <div class="row my-2 mx-2">
+            <div class="col-lg-12 bg-color rounded">
+                <div class="text-light pt-2">
+                    <span class="d-block h3 px-2" id="col_barchart_name">Nifty Open Interest
+                        Tracker</span>
+                </div>
+                <div class="text-light p-1 px-2">
+                    Last Updated: <small id="c_chart_last_upd"></small>
+                </div>
+                <div class="" id="column_chart"></div>
+            </div>
+        </div>
     </div>
 
     <!-- Jquery CDN -->
@@ -115,7 +195,7 @@
     <!-- Moment.JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
 
-    <!--Plugin JavaScript file (Range Slider)-->
+    <!-- Plugin JavaScript file (Range Slider)-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/js/ion.rangeSlider.min.js"></script>
 
     <!-- Apexchart -->
