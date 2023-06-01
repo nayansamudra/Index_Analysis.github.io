@@ -186,6 +186,23 @@ Apexchart
   }
 }
 
-@media (max-width: 800px) {
+@media (max-width: 576px) {
+  .Mobile_View{
+    display: block !important;
+  }
+  .Laptop_View{
+    display: none !important;
+  }
+  .h4, .pcr_net{
+    font-size: 1rem;
+  }
+}
 
+@media (min-width: 576px) {
+  .Mobile_View{
+    display: none !important;
+  }
+  .Laptop_View{
+    display: block !important;
+  }
 }
