@@ -491,7 +491,12 @@ $(document).ready(function () {
           }
         },
         yaxis: {
-          show: false,
+          show: true,
+          labels: {
+            show: true,
+            align: 'left',
+            rotate: 270
+          }
         }
       }
     }],
