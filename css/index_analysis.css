@@ -143,27 +143,33 @@ Apexchart
 .border-faint {
   border-bottom: 1px solid #2e2e2e;
 }
-@media (max-width:992px) {
+@media (max-width: 992px) {
   #strech_me {
     margin-top: 0.5rem !important;
     margin-left: 0 !important;
   }
 }
 
-.cust_legend_heading::before{
-	position: relative;
-	bottom:-3px;
-	content: "•";
-	font-size:30px;
- }
-#cust_legend_1_1,#cust_legend_2_1::before{color:#00d3c0}
-#cust_legend_1_2,#cust_legend_2_2::before {color:#ff5253}
+.cust_legend_heading::before {
+  position: relative;
+  bottom: -3px;
+  content: "•";
+  font-size: 30px;
+}
+#cust_legend_1_1,
+#cust_legend_2_1::before {
+  color: #00d3c0;
+}
+#cust_legend_1_2,
+#cust_legend_2_2::before {
+  color: #ff5253;
+}
 
-.cust_legend_value{
-	background-color: grey;
-	padding:1% 7%;
-	border-radius:15px;
-	font-weight: bold;
+.cust_legend_value {
+  background-color: grey;
+  padding: 1% 7%;
+  border-radius: 15px;
+  font-weight: bold;
 }
 
 .h4 {
@@ -174,6 +180,12 @@ Apexchart
   font-size: 1.525rem;
 }
 
-.donutchart {
-  min-height: 350px !important;
+@media (min-width: 800px) {
+  .donutchart {
+    min-height: 350px !important;
+  }
+}
+
+@media (max-width: 800px) {
+
 }

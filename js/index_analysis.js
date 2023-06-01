@@ -601,15 +601,49 @@ $(document).ready(function () {
   var options1 = {
     chart: {
       type: "donut",
-      width: '250',
-      height: '250'
+      width: '220',
+      height: '220'
     },
     responsive: [{
-      breakpoint: 600,
+      breakpoint: 1150,
       options: {
         chart: {
-          width: '150',
-          height: '150',
+          width: '200',
+          height: '200',
+        },
+        dataLabels: {
+          offsetX: 5,
+          offsetY: 0,
+          style: {
+            fontSize: "10px",
+            fontFamily: "Helvetica, Arial, sans-serif",
+            fontWeight: "bold"
+          }
+        }
+      }
+    },{
+      breakpoint: 992,
+      options: {
+        chart: {
+          width: '250',
+          height: '250',
+        },
+        dataLabels: {
+          offsetX: 5,
+          offsetY: 0,
+          style: {
+            fontSize: "10px",
+            fontFamily: "Helvetica, Arial, sans-serif",
+            fontWeight: "bold"
+          }
+        }
+      }
+    },{
+      breakpoint: 800,
+      options: {
+        chart: {
+          width: '200',
+          height: '200',
         },
         dataLabels: {
           offsetX: 5,
