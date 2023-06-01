@@ -258,6 +258,7 @@ function fetch_data() {
   ts1 = parseFloat(from_t).toFixed(1), ts2 = parseFloat(to_t).toFixed(1);
 
   var x = $("#Expiry").prop("selectedIndex");
+
   if ($("#nifty_btn").hasClass("gb_active") && x == 1) {
     call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY 50", Nifty_exp_2)
     OI_Compass("NIFTY 50")
@@ -358,7 +359,7 @@ function update_chart() {
 
 $(document).ready(function () {
 
-  // console.log = function () { };
+  console.log = function () { };
 
   $.ajaxSetup({ async: false }); // to stop async
 
@@ -380,9 +381,7 @@ $(document).ready(function () {
 
   call_Expiry_API("NIFTY 50");
   call_LIVE_OI_API("NIFTY 50", Nifty_exp_1)
-
-  timestamp_1()
-
+  timestamp_1() // Calculating ts1 and ts2
   call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY 50", Nifty_exp_1)
   NIFTY_50_Open_Intrest_Tracker("NIFTY 50")
   OI_Compass("NIFTY 50")
@@ -473,8 +472,7 @@ $(document).ready(function () {
     },
     colors: ["#ff5253", "#00d3c0"]
   };
-  chart = new ApexCharts(document.querySelector("#grouped_barchart"), options);
-  chart.render();
+  chart = new ApexCharts(document.querySelector("#grouped_barchart"), options), chart.render();
 
   // Grouped Column Bar Chart
   var options = {
@@ -736,8 +734,7 @@ $(document).ready(function () {
       }
     }
   };
-  chart2 = new ApexCharts(document.querySelector("#donutchart1"), options1);
-  chart2.render();
+  chart2 = new ApexCharts(document.querySelector("#donutchart1"), options1), chart2.render();
 
   var donut_bar = {
     responsive: [{
@@ -796,9 +793,7 @@ $(document).ready(function () {
       }
     }
   };
-
-  chart1 = new ApexCharts(document.querySelector("#donutchart"), donut_bar);
-  chart1.render();
+  chart1 = new ApexCharts(document.querySelector("#donutchart"), donut_bar), chart1.render();
 
   Change_PE_OI > 0 ? $("#donutchart path:eq(0)").css("fill", "#00d3c0") : $("#donutchart path:eq(0)").css("fill", "#ff5253"),
     $("#donutchart path:eq(1)").css("fill", "#ff5253")
