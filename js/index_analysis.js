@@ -391,7 +391,7 @@ function update_chart_set_interval() {
 
 $(document).ready(function () {
 
-  // console.log = function () { };
+  console.log = function () { };
 
   $.ajaxSetup({ async: false }); // to stop async
 
