@@ -79,7 +79,7 @@ function call_INDEX_OI_CHANGE_API(ts1, ts2, script, exp) {
   }
 }
 
-// Calculation for data of NIFTY 50 Open Intrest Tracker
+// Calculation for data of NIFTY 50 Open Interest Tracker
 function NIFTY_50_Open_Intrest_Tracker(script) {
   let array = Object.keys(Object.values(Live_OI_data)[0])
   let processedArray = array.slice(0, array.length - 1);
@@ -864,7 +864,7 @@ $(document).ready(function () {
     update_chart()
     update_chart_set_interval()
 
-    $('#col_barchart_name').text('Nifty 50 Open Intrest Tracker');
+    $('#col_barchart_name').text('Nifty 50 Open Interest Tracker');
   });
   $("#bnknifty_btn").click(function () {
     $('#Candlestick_title').text('Nifty Bank')
@@ -897,7 +897,7 @@ $(document).ready(function () {
     update_chart()
     update_chart_set_interval()
 
-    $('#col_barchart_name').text('Banknifty Open Intrest Tracker');
+    $('#col_barchart_name').text('Banknifty Open Interest Tracker');
   });
   $("#finnifty_btn").click(function () {
     $('#Candlestick_title').text('Nifty Fin Service')
@@ -928,9 +928,9 @@ $(document).ready(function () {
     OI_Compass("NIFTY FIN SERVICE")
     Changes_in_Put_Call()
     update_chart()
-    update_chart_set_interval()
+    update_chart_set_interval() 
 
-    $('#col_barchart_name').text('Finnifty Open Intrest Tracker');
+    $('#col_barchart_name').text('Finnifty Open Interest Tracker');
   });
 
   //Expiry Change
