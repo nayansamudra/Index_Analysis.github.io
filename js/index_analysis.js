@@ -64,7 +64,7 @@ function timestamp_1() {
 function call_INDEX_OI_CHANGE_API(ts1, ts2, script, exp) {
   try {
     $.post(
-      root + "/index_analysis",
+      root + "/index_analysis_1",
       { ts1: ts1, ts2: ts2, script: script, exp: exp },
       function (data, status) {
         Index_OI_Change_data = data;
@@ -261,7 +261,7 @@ function Changes_in_Put_Call() {
 
 function fetch_data() {
   let irs_data = $(".js-range-slider").data("ionRangeSlider");
-  from_t = moment(irs_data.old_from).unix(), to_t = moment(irs_data.old_to).unix();
+  from_t = moment(irs_data.old_from).unix(), to_t = moment(irs_data.old_to).unix();s
   ts1 = parseFloat(from_t).toFixed(1), ts2 = parseFloat(to_t).toFixed(1);
 
   var x = $("#Expiry").prop("selectedIndex");
