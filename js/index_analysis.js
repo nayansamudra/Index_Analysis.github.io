@@ -71,9 +71,11 @@ function call_INDEX_OI_CHANGE_API(ts1, ts2, script, exp) {
       }
     ).fail(function (response) {
       console.log('Error: ' + response);
+      Index_OI_Change_data = 0
     });
   } catch (error) {
     console.error()
+    Index_OI_Change_data = 0
   }
 }
 
@@ -125,131 +127,136 @@ function NIFTY_50_Open_Intrest_Tracker(script) {
 
 // Calculation for data of OI Compass
 function OI_Compass(script) {
-  let array_2 = Object.values(Index_OI_Change_data);
-  var commonKeys = Object.keys(array_2[0]);
+  if (Index_OI_Change_data != 0) {
 
-  // Get the common keys from all dictionaries in the array
-  var commonKeys = array_2.reduce(function (keys, obj) {
-    return Object.keys(obj).filter(function (key) {
-      return keys.includes(key);
+    let array_2 = Object.values(Index_OI_Change_data);
+    var commonKeys = Object.keys(array_2[0]);
+    // Get the common keys from all dictionaries in the array
+    var commonKeys = array_2.reduce(function (keys, obj) {
+      return Object.keys(obj).filter(function (key) {
+        return keys.includes(key);
+      });
+    }, Object.keys(array_2[0]));
+    // Perform intersection for each dictionary in the array
+    Index_OI_final_Change_data = array_2.map(function (obj) {
+      var intersection = {};
+      commonKeys.forEach(function (key) {
+        if (key in obj) {
+          intersection[key] = obj[key];
+        }
+      });
+      return intersection;
     });
-  }, Object.keys(array_2[0]));
 
-  // Perform intersection for each dictionary in the array
-  Index_OI_final_Change_data = array_2.map(function (obj) {
-    var intersection = {};
-    commonKeys.forEach(function (key) {
-      if (key in obj) {
-        intersection[key] = obj[key];
+
+    let array = Object.keys(Object.values(Index_OI_final_Change_data)[0])
+    let processedArray = array.slice(0, array.length - 1);
+    let newArray = $.map(processedArray, function (element) {
+      if (script == "NIFTY 50") {
+        return element.slice(14, -2);
+      }
+      else if (script == "NIFTY BANK") {
+        return element.slice(18, -2);
+      }
+      else if (script == "NIFTY FIN SERVICE") {
+        return element.slice(17, -2);
       }
     });
-    return intersection;
-  });
+    let uniqueArray = $.unique(newArray);
+    x_axis_categories_OI_Compass = uniqueArray
 
+    let my_array = x_axis_categories_OI_Compass;
+    let reversed_array = $([].concat(my_array)).toArray().reverse();
+    x_axis_categories_OI_Compass = reversed_array
 
-  let array = Object.keys(Object.values(Index_OI_Change_data)[0])
-  let processedArray = array.slice(0, array.length - 1);
-  let newArray = $.map(processedArray, function (element) {
-    if (script == "NIFTY 50") {
-      return element.slice(14, -2);
+    let array_1 = Object.values(Index_OI_final_Change_data)
+    Diff_Result = {};
+    for (let key in array_1[0]) {
+      if (array_1[0].hasOwnProperty(key) && array_1[1].hasOwnProperty(key)) {
+        let diff = array_1[1][key] - array_1[0][key];
+        Diff_Result[key] = diff;
+      }
     }
-    else if (script == "NIFTY BANK") {
-      return element.slice(18, -2);
+
+
+    let Dict = Diff_Result
+    CE_array_OI_Compass = [];
+    PE_array_OI_Compass = [];
+
+    $.each(Dict, function (key, value) {
+      if (key.indexOf("CE") !== -1) {
+        CE_array_OI_Compass.push(value);
+      } else if (key.indexOf("PE") !== -1) {
+        PE_array_OI_Compass.push(value);
+      }
+    });
+
+    let my_array_1 = CE_array_OI_Compass;
+    let reversed_array_1 = $([].concat(my_array_1)).toArray().reverse();
+    CE_array_OI_Compass = reversed_array_1
+
+    let my_array_2 = PE_array_OI_Compass;
+    let reversed_array_2 = $([].concat(my_array_2)).toArray().reverse();
+    PE_array_OI_Compass = reversed_array_2
+
+    OI_Compass_atm_1 = `${Object.values(Index_OI_Change_data)[0]['atm']}`
+    OI_Compass_atm_2 = `${Object.values(Index_OI_Change_data)[1]['atm']}`
+    if (OI_Compass_atm_1 == OI_Compass_atm_2) {
+      OI_Compass_atm_Final = OI_Compass_atm_1
+    } else {
+      OI_Compass_atm_Final = OI_Compass_atm_2
     }
-    else if (script == "NIFTY FIN SERVICE") {
-      return element.slice(17, -2);
-    }
-  });
-  let uniqueArray = $.unique(newArray);
-  x_axis_categories_OI_Compass = uniqueArray
 
-  let my_array = x_axis_categories_OI_Compass;
-  let reversed_array = $([].concat(my_array)).toArray().reverse();
-  x_axis_categories_OI_Compass = reversed_array
-
-  let array_1 = Object.values(Index_OI_Change_data)
-  Diff_Result = {};
-  for (let key in array_1[0]) {
-    if (array_1[0].hasOwnProperty(key) && array_1[1].hasOwnProperty(key)) {
-      let diff = array_1[1][key] - array_1[0][key];
-      Diff_Result[key] = diff;
-    }
-  }
-
-
-  let Dict = Diff_Result
-  CE_array_OI_Compass = [];
-  PE_array_OI_Compass = [];
-
-  $.each(Dict, function (key, value) {
-    if (key.indexOf("CE") !== -1) {
-      CE_array_OI_Compass.push(value);
-    } else if (key.indexOf("PE") !== -1) {
-      PE_array_OI_Compass.push(value);
-    }
-  });
-
-  let my_array_1 = CE_array_OI_Compass;
-  let reversed_array_1 = $([].concat(my_array_1)).toArray().reverse();
-  CE_array_OI_Compass = reversed_array_1
-
-  let my_array_2 = PE_array_OI_Compass;
-  let reversed_array_2 = $([].concat(my_array_2)).toArray().reverse();
-  PE_array_OI_Compass = reversed_array_2
-
-  OI_Compass_atm_1 = `${Object.values(Index_OI_Change_data)[0]['atm']}`
-  OI_Compass_atm_2 = `${Object.values(Index_OI_Change_data)[1]['atm']}`
-  if (OI_Compass_atm_1 == OI_Compass_atm_2) {
-    OI_Compass_atm_Final = OI_Compass_atm_1
-  } else {
-    OI_Compass_atm_Final = OI_Compass_atm_2
   }
 }
 
 // Calculation for Change in P/C
 function Changes_in_Put_Call() {
-  let array = Object.values(Index_OI_final_Change_data)
+  if (Index_OI_Change_data != 0) {
 
-  // Calculate ts1_CE_Total
-  let ts1_CE_Total = 0;
-  for (let key in array[0]) {
-    if (key.endsWith('CE')) {
-      ts1_CE_Total += array[0][key];
+    let array = Object.values(Index_OI_final_Change_data)
+
+    // Calculate ts1_CE_Total
+    let ts1_CE_Total = 0;
+    for (let key in array[0]) {
+      if (key.endsWith('CE')) {
+        ts1_CE_Total += array[0][key];
+      }
     }
-  }
 
-  // Calculate ts2_CE_Total
-  let ts2_CE_Total = 0;
-  for (let key in array[1]) {
-    if (key.endsWith('CE')) {
-      ts2_CE_Total += array[1][key];
+    // Calculate ts2_CE_Total
+    let ts2_CE_Total = 0;
+    for (let key in array[1]) {
+      if (key.endsWith('CE')) {
+        ts2_CE_Total += array[1][key];
+      }
     }
-  }
 
-  // Calculate Change_CE_OI
-  Change_CE_OI = ts2_CE_Total - ts1_CE_Total;
+    // Calculate Change_CE_OI
+    Change_CE_OI = ts2_CE_Total - ts1_CE_Total;
 
-  // Calculate ts1_PE_Total
-  let ts1_PE_Total = 0;
-  for (let key in array[0]) {
-    if (key.endsWith('PE')) {
-      ts1_PE_Total += array[0][key];
+    // Calculate ts1_PE_Total
+    let ts1_PE_Total = 0;
+    for (let key in array[0]) {
+      if (key.endsWith('PE')) {
+        ts1_PE_Total += array[0][key];
+      }
     }
-  }
 
-  // Calculate ts2_PE_Total
-  let ts2_PE_Total = 0;
-  for (let key in array[1]) {
-    if (key.endsWith('PE')) {
-      ts2_PE_Total += array[1][key];
+    // Calculate ts2_PE_Total
+    let ts2_PE_Total = 0;
+    for (let key in array[1]) {
+      if (key.endsWith('PE')) {
+        ts2_PE_Total += array[1][key];
+      }
     }
+
+    // Calculate Change_PE_OI
+    Change_PE_OI = ts2_PE_Total - ts1_PE_Total;
+
+    $('.chg_ce').text(Change_CE_OI)
+    $('.chg_pe').text(Change_PE_OI)
   }
-
-  // Calculate Change_PE_OI
-  Change_PE_OI = ts2_PE_Total - ts1_PE_Total;
-
-  $('.chg_ce').text(Change_CE_OI)
-  $('.chg_pe').text(Change_PE_OI)
 }
 
 function fetch_data() {
@@ -319,35 +326,6 @@ function update_chart() {
     data: PE_array_OI_Compass
   }])
 
-  c_chart.updateOptions({
-    annotations: {
-      xaxis: [{
-        x: Open_Intrest_Tracker_atm,
-        offsetX: -1,
-        offsetY: 0,
-        borderColor: "#ffffff",
-        label: {
-          style: {
-            color: "#123"
-          },
-          orientation: "horizontal",
-          text: "ATM"
-        }
-      }]
-    },
-    xaxis: {
-      categories: x_axis_categories
-    }
-  }), c_chart.updateSeries([{
-    name: "Call OI",
-    data: CE_array
-  }, {
-    name: "Put OI",
-    data: PE_array
-  }])
-
-  chart2.updateSeries([PE_OI_total, CE_OI_total])
-
   chart1.updateSeries([{
     name: "OI Chng",
     data: [Change_PE_OI, Change_CE_OI]
@@ -394,6 +372,23 @@ $(document).ready(function () {
   console.log = function () { };
 
   $.ajaxSetup({ async: false }); // to stop async
+
+  Index_OI_Change_data = 0;
+  Change_PE_OI = 0;
+  Change_CE_OI = 0;
+  CE_array_OI_Compass = [0,0]
+  PE_array_OI_Compass = [0,0]
+  x_axis_categories_OI_Compass = [0,0]
+  OI_Compass_atm_Final = 0
+  CE_array = [0,0]
+  PE_array = [0,0]
+  x_axis_categories = 0
+  Open_Intrest_Tracker_atm = 0
+  PE_OI_total = 0 
+  CE_OI_total = 0
+  Change_PE_OI = 0
+  Change_CE_OI = 0
+
 
   $(".js-range-slider").ionRangeSlider({
     grid: true,
@@ -840,8 +835,21 @@ $(document).ready(function () {
   // On click Function of 3 BUTTONS [NIFTY 50, NIFTY BANK, NIFTY FIN SERVICE]
   $("#nifty_btn").click(function () {
     $('#Candlestick_title').text('Nifty 50')
-    compare = 0;
-    counter_for_Nifty_3min = 0;
+    Index_OI_Change_data = 0;
+    Change_PE_OI = 0;
+    Change_CE_OI = 0;
+    CE_array_OI_Compass = [0,0]
+    PE_array_OI_Compass = [0,0]
+    x_axis_categories_OI_Compass = [0,0]
+    OI_Compass_atm_Final = 0
+    CE_array = [0,0]
+    PE_array = [0,0]
+    x_axis_categories = 0
+    Open_Intrest_Tracker_atm = 0
+    PE_OI_total = 0 
+    CE_OI_total = 0
+    Change_PE_OI = 0
+    Change_CE_OI = 0
     $("#nifty_btn").addClass("gb_active");
     $("#bnknifty_btn").removeClass("gb_active");
     $("#finnifty_btn").removeClass("gb_active");
@@ -854,11 +862,27 @@ $(document).ready(function () {
     OI_Compass("NIFTY 50")
     Changes_in_Put_Call()
     update_chart()
+    update_chart_set_interval()
+
+    $('#col_barchart_name').text('Nifty 50 Open Intrest Tracker');
   });
   $("#bnknifty_btn").click(function () {
     $('#Candlestick_title').text('Nifty Bank')
-    compare = 0;
-    counter_for_Nifty_3min = 0;
+    Index_OI_Change_data = 0;
+    Change_PE_OI = 0;
+    Change_CE_OI = 0;
+    CE_array_OI_Compass = [0,0]
+    PE_array_OI_Compass = [0,0]
+    x_axis_categories_OI_Compass = [0,0]
+    OI_Compass_atm_Final = 0
+    CE_array = [0,0]
+    PE_array = [0,0]
+    x_axis_categories = 0
+    Open_Intrest_Tracker_atm = 0
+    PE_OI_total = 0 
+    CE_OI_total = 0
+    Change_PE_OI = 0
+    Change_CE_OI = 0
     $("#nifty_btn").removeClass("gb_active");
     $("#bnknifty_btn").addClass("gb_active");
     $("#finnifty_btn").removeClass("gb_active");
@@ -871,11 +895,27 @@ $(document).ready(function () {
     OI_Compass("NIFTY BANK")
     Changes_in_Put_Call()
     update_chart()
+    update_chart_set_interval()
+
+    $('#col_barchart_name').text('Banknifty Open Intrest Tracker');
   });
   $("#finnifty_btn").click(function () {
     $('#Candlestick_title').text('Nifty Fin Service')
-    compare = 0;
-    counter_for_Nifty_3min = 0;
+    Index_OI_Change_data = 0;
+    Change_PE_OI = 0;
+    Change_CE_OI = 0;
+    CE_array_OI_Compass = [0,0]
+    PE_array_OI_Compass = [0,0]
+    x_axis_categories_OI_Compass = [0,0]
+    OI_Compass_atm_Final = 0
+    CE_array = [0,0]
+    PE_array = [0,0]
+    x_axis_categories = 0
+    Open_Intrest_Tracker_atm = 0
+    PE_OI_total = 0 
+    CE_OI_total = 0
+    Change_PE_OI = 0
+    Change_CE_OI = 0
     $("#nifty_btn").removeClass("gb_active");
     $("#bnknifty_btn").removeClass("gb_active");
     $("#finnifty_btn").addClass("gb_active");
@@ -888,6 +928,9 @@ $(document).ready(function () {
     OI_Compass("NIFTY FIN SERVICE")
     Changes_in_Put_Call()
     update_chart()
+    update_chart_set_interval()
+
+    $('#col_barchart_name').text('Finnifty Open Intrest Tracker');
   });
 
   //Expiry Change
@@ -900,6 +943,7 @@ $(document).ready(function () {
       OI_Compass("NIFTY 50")
       Changes_in_Put_Call()
       update_chart()
+      update_chart_set_interval()
     } else if ($("#nifty_btn").hasClass("gb_active") && x == 0) {
       call_LIVE_OI_API("NIFTY 50", Nifty_exp_1)
       call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY 50", Nifty_exp_1)
@@ -907,6 +951,7 @@ $(document).ready(function () {
       OI_Compass("NIFTY 50")
       Changes_in_Put_Call()
       update_chart()
+      update_chart_set_interval()
     } else if ($("#bnknifty_btn").hasClass("gb_active") && x == 1) {
       call_LIVE_OI_API("NIFTY BANK", Nifty_exp_2)
       call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY BANK", Nifty_exp_2)
@@ -914,6 +959,7 @@ $(document).ready(function () {
       OI_Compass("NIFTY BANK")
       Changes_in_Put_Call()
       update_chart()
+      update_chart_set_interval()
     } else if ($("#bnknifty_btn").hasClass("gb_active") && x == 0) {
       call_LIVE_OI_API("NIFTY BANK", Nifty_exp_1)
       call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY BANK", Nifty_exp_1)
@@ -921,6 +967,7 @@ $(document).ready(function () {
       OI_Compass("NIFTY BANK")
       Changes_in_Put_Call()
       update_chart()
+      update_chart_set_interval()
     } else if ($("#finnifty_btn").hasClass("gb_active") && x == 1) {
       call_LIVE_OI_API("NIFTY FIN SERVICE", Nifty_exp_2)
       call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY FIN SERVICE", Nifty_exp_2)
@@ -928,6 +975,7 @@ $(document).ready(function () {
       OI_Compass("NIFTY FIN SERVICE")
       Changes_in_Put_Call()
       update_chart()
+      update_chart_set_interval()
     } else if ($("#finnifty_btn").hasClass("gb_active") && x == 0) {
       call_LIVE_OI_API("NIFTY FIN SERVICE", Nifty_exp_1)
       call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY FIN SERVICE", Nifty_exp_1)
@@ -935,14 +983,12 @@ $(document).ready(function () {
       OI_Compass("NIFTY FIN SERVICE")
       Changes_in_Put_Call()
       update_chart()
+      update_chart_set_interval()
     }
   })
 
   // SetInterval after 3 min
   setInterval(() => {
-
-    console.log("function run")
-
     var x = $("#Expiry").prop("selectedIndex");
     if ($("#nifty_btn").hasClass("gb_active") && x == 1) {
       call_LIVE_OI_API("NIFTY 50", Nifty_exp_2)
