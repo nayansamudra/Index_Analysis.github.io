@@ -64,7 +64,7 @@ function timestamp_1() {
 function call_INDEX_OI_CHANGE_API(ts1, ts2, script, exp) {
   try {
     $.post(
-      root + "/index_analysis_1",
+      root + "/index_analysis",
       { ts1: ts1, ts2: ts2, script: script, exp: exp },
       function (data, status) {
         Index_OI_Change_data = data;
