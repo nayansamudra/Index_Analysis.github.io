@@ -49,7 +49,7 @@ function call_LIVE_OI_API(script, exp) {
 // Function for timestamp 1 
 function timestamp_1() {
   ts2 = Object.keys(Live_OI_data)[0]
-  
+
   year = moment.unix(parseFloat(ts2)).year()
   month = moment.unix(parseFloat(ts2)).month()
   day = moment.unix(parseFloat(ts2)).date()
@@ -353,13 +353,45 @@ function update_chart() {
     data: [Change_PE_OI, Change_CE_OI]
   }])
 
+  $("#donutchart path:eq(1)").css("fill", "#ff5253")
   Change_PE_OI > 0 ? $("#donutchart path:eq(0)").css("fill", "#00d3c0") : $("#donutchart path:eq(0)").css("fill", "#ff5253"),
-    $("#donutchart path:eq(1)").css("fill", "#ff5253")
+    Change_CE_OI > 0 ? $("#donutchart path:eq(1)").css("fill", "#ff5253") : $("#donutchart path:eq(1)").css("fill", "#00d3c0")
+}
+
+function update_chart_set_interval() {
+  c_chart.updateOptions({
+    annotations: {
+      xaxis: [{
+        x: Open_Intrest_Tracker_atm,
+        offsetX: -1,
+        offsetY: 0,
+        borderColor: "#ffffff",
+        label: {
+          style: {
+            color: "#123"
+          },
+          orientation: "horizontal",
+          text: "ATM"
+        }
+      }]
+    },
+    xaxis: {
+      categories: x_axis_categories
+    }
+  }), c_chart.updateSeries([{
+    name: "Call OI",
+    data: CE_array
+  }, {
+    name: "Put OI",
+    data: PE_array
+  }])
+
+  chart2.updateSeries([PE_OI_total, CE_OI_total])
 }
 
 $(document).ready(function () {
 
-  console.log = function () { };
+  // console.log = function () { };
 
   $.ajaxSetup({ async: false }); // to stop async
 
@@ -624,7 +656,7 @@ $(document).ready(function () {
           }
         }
       }
-    },{
+    }, {
       breakpoint: 992,
       options: {
         chart: {
@@ -641,7 +673,7 @@ $(document).ready(function () {
           }
         }
       }
-    },{
+    }, {
       breakpoint: 800,
       options: {
         chart: {
@@ -741,6 +773,7 @@ $(document).ready(function () {
   };
   chart2 = new ApexCharts(document.querySelector("#donutchart1"), options1), chart2.render();
 
+  // Bar Chart
   var donut_bar = {
     responsive: [{
       breakpoint: 800,
@@ -800,8 +833,9 @@ $(document).ready(function () {
   };
   chart1 = new ApexCharts(document.querySelector("#donutchart"), donut_bar), chart1.render();
 
+  $("#donutchart path:eq(1)").css("fill", "#ff5253")
   Change_PE_OI > 0 ? $("#donutchart path:eq(0)").css("fill", "#00d3c0") : $("#donutchart path:eq(0)").css("fill", "#ff5253"),
-    $("#donutchart path:eq(1)").css("fill", "#ff5253")
+    Change_CE_OI > 0 ? $("#donutchart path:eq(1)").css("fill", "#ff5253") : $("#donutchart path:eq(1)").css("fill", "#00d3c0");
 
   // On click Function of 3 BUTTONS [NIFTY 50, NIFTY BANK, NIFTY FIN SERVICE]
   $("#nifty_btn").click(function () {
@@ -903,4 +937,37 @@ $(document).ready(function () {
       update_chart()
     }
   })
+
+  // SetInterval after 3 min
+  setInterval(() => {
+
+    console.log("function run")
+
+    var x = $("#Expiry").prop("selectedIndex");
+    if ($("#nifty_btn").hasClass("gb_active") && x == 1) {
+      call_LIVE_OI_API("NIFTY 50", Nifty_exp_2)
+      NIFTY_50_Open_Intrest_Tracker("NIFTY 50")
+      update_chart_set_interval()
+    } else if ($("#nifty_btn").hasClass("gb_active") && x == 0) {
+      call_LIVE_OI_API("NIFTY 50", Nifty_exp_1)
+      NIFTY_50_Open_Intrest_Tracker("NIFTY 50")
+      update_chart_set_interval()
+    } else if ($("#bnknifty_btn").hasClass("gb_active") && x == 1) {
+      call_LIVE_OI_API("NIFTY BANK", Nifty_exp_2)
+      NIFTY_50_Open_Intrest_Tracker("NIFTY BANK")
+      update_chart_set_interval()
+    } else if ($("#bnknifty_btn").hasClass("gb_active") && x == 0) {
+      call_LIVE_OI_API("NIFTY BANK", Nifty_exp_1)
+      NIFTY_50_Open_Intrest_Tracker("NIFTY BANK")
+      update_chart_set_interval()
+    } else if ($("#finnifty_btn").hasClass("gb_active") && x == 1) {
+      call_LIVE_OI_API("NIFTY FIN SERVICE", Nifty_exp_2)
+      NIFTY_50_Open_Intrest_Tracker("NIFTY FIN SERVICE")
+      update_chart_set_interval()
+    } else if ($("#finnifty_btn").hasClass("gb_active") && x == 0) {
+      call_LIVE_OI_API("NIFTY FIN SERVICE", Nifty_exp_1)
+      NIFTY_50_Open_Intrest_Tracker("NIFTY FIN SERVICE")
+      update_chart_set_interval()
+    }
+  }, 180000);
 })
