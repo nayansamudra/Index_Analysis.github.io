@@ -261,7 +261,7 @@ function Changes_in_Put_Call() {
 
 function fetch_data() {
   let irs_data = $(".js-range-slider").data("ionRangeSlider");
-  from_t = moment(irs_data.old_from).unix(), to_t = moment(irs_data.old_to).unix();s
+  from_t = moment(irs_data.old_from).unix(), to_t = moment(irs_data.old_to).unix();
   ts1 = parseFloat(from_t).toFixed(1), ts2 = parseFloat(to_t).toFixed(1);
 
   var x = $("#Expiry").prop("selectedIndex");
