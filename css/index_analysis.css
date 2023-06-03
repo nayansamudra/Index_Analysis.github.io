@@ -150,12 +150,12 @@ Apexchart
   }
 }
 
-.cust_legend_heading::before {
+/* .cust_legend_heading::before {
   position: relative;
   bottom: -3px;
   content: "•";
   font-size: 30px;
-}
+} */
 #cust_legend_1_1,
 #cust_legend_2_1::before {
   color: #00d3c0;

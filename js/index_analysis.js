@@ -1,11 +1,30 @@
 root = "https://students.tradingcafeindia.com/tc_indicator"
 
+// Check Access API
+function call_check_access_API(user) {
+  try {
+    $.post("https://tredcode.tradingcafeindia.com/dhan/check_access", { email: user }, function (data, status) {
+      Check_Access_data = data;
+    }
+    ).fail(function (response) {
+      console.log('Error: ' + response);
+    });
+
+    if (Check_Access_data != "Authorised") {
+      $('.finnifty_btn').attr('id', 'unAuth_finnifty_btn')
+      $('#unAuth_finnifty_btn').text('GET FINNIFTY')
+    }
+  } catch (error) {
+    console.error()
+  }
+}
+
 // Expiry API
-function call_Expiry_API(script) {
+function call_Expiry_API(script, user, abc) {
   try {
     $.post(
       root + "/get_running_expiry",
-      { script: script },
+      { script: script, email: user, auth: abc },
       function (data, status) {
         Expiry_data = data;
       }
@@ -27,11 +46,11 @@ function call_Expiry_API(script) {
 }
 
 // LIVE OI API
-function call_LIVE_OI_API(script, exp) {
+function call_LIVE_OI_API(script, exp, user, abc) {
   try {
     $.post(
       root + "/live_oi",
-      { script: script, exp: exp },
+      { script: script, exp: exp, email: user, auth: abc },
       function (data, status) {
         Live_OI_data = data;
       }
@@ -61,11 +80,11 @@ function timestamp_1() {
 }
 
 // INDEX OI CHANGE API
-function call_INDEX_OI_CHANGE_API(ts1, ts2, script, exp) {
+function call_INDEX_OI_CHANGE_API(ts1, ts2, script, exp, user, abc) {
   try {
     $.post(
       root + "/index_analysis",
-      { ts1: ts1, ts2: ts2, script: script, exp: exp },
+      { ts1: ts1, ts2: ts2, script: script, exp: exp, email: user, auth: abc },
       function (data, status) {
         Index_OI_Change_data = data;
       }
@@ -200,12 +219,12 @@ function OI_Compass(script) {
     PE_array_OI_Compass = reversed_array_2
 
     OI_Compass_atm_1 = `${Object.values(Index_OI_Change_data)[0]['atm']}`
-    OI_Compass_atm_2 = `${Object.values(Index_OI_Change_data)[1]['atm']}`
-    if (OI_Compass_atm_1 == OI_Compass_atm_2) {
-      OI_Compass_atm_Final = OI_Compass_atm_1
-    } else {
-      OI_Compass_atm_Final = OI_Compass_atm_2
-    }
+    // OI_Compass_atm_2 = `${Object.values(Index_OI_Change_data)[1]['atm']}`
+    // if (OI_Compass_atm_1 == OI_Compass_atm_2) {
+    //   OI_Compass_atm_Final = OI_Compass_atm_1
+    // } else {
+    OI_Compass_atm_Final = OI_Compass_atm_1
+    // }
 
   }
 }
@@ -260,39 +279,49 @@ function Changes_in_Put_Call() {
 }
 
 function fetch_data() {
+  // Getting Timestamp from ion Range slider
   let irs_data = $(".js-range-slider").data("ionRangeSlider");
   from_t = moment(irs_data.old_from).unix(), to_t = moment(irs_data.old_to).unix();
   ts1 = parseFloat(from_t).toFixed(1), ts2 = parseFloat(to_t).toFixed(1);
 
+  var x1 = moment.unix(parseFloat(Object.keys(Live_OI_data)[0])).format('DD-MM-YYYY')
+  var y1 = moment.unix(parseFloat(ts1)).format('HH:mm:ss:SSS')
+  var y2 = moment.unix(parseFloat(ts2)).format('HH:mm:ss:SSS')
+
+  var datetime_1 = moment(x1 + ' ' + y1, 'DD-MM-YYYY HH:mm:ss:SSS');
+  var datetime_2 = moment(x1 + ' ' + y2, 'DD-MM-YYYY HH:mm:ss:SSS');
+  ts1 = datetime_1.valueOf(), ts1 = moment(ts1).unix(), ts1 = parseFloat(ts1).toFixed(1);
+  ts2 = datetime_2.valueOf(), ts2 = moment(ts2).unix(), ts2 = parseFloat(ts2).toFixed(1);
+
   var x = $("#Expiry").prop("selectedIndex");
 
   if ($("#nifty_btn").hasClass("gb_active") && x == 1) {
-    call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY 50", Nifty_exp_2)
+    call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY 50", Nifty_exp_2, user, abc)
     OI_Compass("NIFTY 50")
     Changes_in_Put_Call()
     update_chart()
   } else if ($("#nifty_btn").hasClass("gb_active") && x == 0) {
-    call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY 50", Nifty_exp_1)
+    call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY 50", Nifty_exp_1, user, abc)
     OI_Compass("NIFTY 50")
     Changes_in_Put_Call()
     update_chart()
   } else if ($("#bnknifty_btn").hasClass("gb_active") && x == 1) {
-    call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY BANK", Nifty_exp_2)
+    call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY BANK", Nifty_exp_2, user, abc)
     OI_Compass("NIFTY BANK")
     Changes_in_Put_Call()
     update_chart()
   } else if ($("#bnknifty_btn").hasClass("gb_active") && x == 0) {
-    call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY BANK", Nifty_exp_1)
+    call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY BANK", Nifty_exp_1, user, abc)
     OI_Compass("NIFTY BANK")
     Changes_in_Put_Call()
     update_chart()
   } else if ($("#finnifty_btn").hasClass("gb_active") && x == 1) {
-    call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY FIN SERVICE", Nifty_exp_2)
+    call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY FIN SERVICE", Nifty_exp_2, user, abc)
     OI_Compass("NIFTY FIN SERVICE")
     Changes_in_Put_Call()
     update_chart()
   } else if ($("#finnifty_btn").hasClass("gb_active") && x == 0) {
-    call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY FIN SERVICE", Nifty_exp_1)
+    call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY FIN SERVICE", Nifty_exp_1, user, abc)
     OI_Compass("NIFTY FIN SERVICE")
     Changes_in_Put_Call()
     update_chart()
@@ -367,36 +396,62 @@ function update_chart_set_interval() {
   chart2.updateSeries([PE_OI_total, CE_OI_total])
 }
 
+function updateSlider(fromValue, toValue) {
+  slider.update({
+    from: fromValue,
+    to: toValue
+  });
+}
+
 $(document).ready(function () {
 
   console.log = function () { };
 
   $.ajaxSetup({ async: false }); // to stop async
 
+  user = "dknaix@gmail.com"
+
+  abc = "";
+  function Auth_User(auth) {
+    $.post(
+      root + "/auth",
+      { email: auth },
+      function (data, status) {
+        abc = data
+      }
+    ).fail(function (response) {
+      console.log('Error: ' + response);
+    });
+  }
+  Auth_User(user)
+
   Index_OI_Change_data = 0;
   Change_PE_OI = 0;
   Change_CE_OI = 0;
-  CE_array_OI_Compass = [0,0]
-  PE_array_OI_Compass = [0,0]
-  x_axis_categories_OI_Compass = [0,0]
+  CE_array_OI_Compass = [0, 0]
+  PE_array_OI_Compass = [0, 0]
+  x_axis_categories_OI_Compass = [0, 0]
   OI_Compass_atm_Final = 0
-  CE_array = [0,0]
-  PE_array = [0,0]
+  CE_array = [0, 0]
+  PE_array = [0, 0]
   x_axis_categories = 0
   Open_Intrest_Tracker_atm = 0
-  PE_OI_total = 0 
+  PE_OI_total = 0
   CE_OI_total = 0
   Change_PE_OI = 0
   Change_CE_OI = 0
 
+  
+  // user = "samudragupta201@gmail.com"
 
-  $(".js-range-slider").ionRangeSlider({
+
+  slider = $(".js-range-slider").ionRangeSlider({
     grid: true,
     type: "double",
     min: moment("0915", "hhmm").valueOf(),
     max: moment("1530", "hhmm").valueOf(),
     from: moment("0915", "hhmm").valueOf(),
-    to: new Date().getTime(),
+    to: moment("1530", "hhmm").valueOf(),
     force_edges: !0,
     grid_num: 12,
     step: 180000,
@@ -404,15 +459,25 @@ $(document).ready(function () {
     prettify: function (t) {
       return moment(t).format("HH:mm")
     }
-  });
+  }).data("ionRangeSlider");
 
-  call_Expiry_API("NIFTY 50");
-  call_LIVE_OI_API("NIFTY 50", Nifty_exp_1)
+  call_check_access_API(user)
+  call_Expiry_API("NIFTY 50", user, abc);
+  call_LIVE_OI_API("NIFTY 50", Nifty_exp_1, user, abc)
   timestamp_1() // Calculating ts1 and ts2
-  call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY 50", Nifty_exp_1)
+  call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY 50", Nifty_exp_1, user, abc)
   NIFTY_50_Open_Intrest_Tracker("NIFTY 50")
   OI_Compass("NIFTY 50")
   Changes_in_Put_Call()
+
+  let today = moment();
+  let todays_day = today.format('DD-MM-YYYY')
+  let API_day = moment.unix(Object.keys(Live_OI_data)[0]).format('DD-MM-YYYY')
+  if (todays_day == API_day) {
+    updateSlider("9:15", new Date().getTime())
+  } else {
+    updateSlider("9:15", "15:30")
+  }
 
   // Grouped Horizontal Bar Chart 
   var options = {
@@ -838,147 +903,171 @@ $(document).ready(function () {
     Index_OI_Change_data = 0;
     Change_PE_OI = 0;
     Change_CE_OI = 0;
-    CE_array_OI_Compass = [0,0]
-    PE_array_OI_Compass = [0,0]
-    x_axis_categories_OI_Compass = [0,0]
+    CE_array_OI_Compass = [0, 0]
+    PE_array_OI_Compass = [0, 0]
+    x_axis_categories_OI_Compass = [0, 0]
     OI_Compass_atm_Final = 0
-    CE_array = [0,0]
-    PE_array = [0,0]
+    CE_array = [0, 0]
+    PE_array = [0, 0]
     x_axis_categories = 0
     Open_Intrest_Tracker_atm = 0
-    PE_OI_total = 0 
+    PE_OI_total = 0
     CE_OI_total = 0
     Change_PE_OI = 0
     Change_CE_OI = 0
     $("#nifty_btn").addClass("gb_active");
     $("#bnknifty_btn").removeClass("gb_active");
     $("#finnifty_btn").removeClass("gb_active");
-    $("#Expiry").prop("selectedIndex", 0);
+    // $("#Expiry").prop("selectedIndex", 0);
 
-    call_Expiry_API("NIFTY 50");
-    call_LIVE_OI_API("NIFTY 50", Nifty_exp_1)
-    call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY 50", Nifty_exp_1)
+    call_Expiry_API("NIFTY 50", user, abc);
+
+    var x = $("#Expiry").prop("selectedIndex");
+    if ($("#nifty_btn").hasClass("gb_active") && x == 1) {
+      call_LIVE_OI_API("NIFTY 50", Nifty_exp_2, user, abc)
+    } else if ($("#nifty_btn").hasClass("gb_active") && x == 0) {
+      call_LIVE_OI_API("NIFTY 50", Nifty_exp_1, user, abc)
+    }
+
+    // call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY 50", Nifty_exp_1)
     NIFTY_50_Open_Intrest_Tracker("NIFTY 50")
-    OI_Compass("NIFTY 50")
-    Changes_in_Put_Call()
-    update_chart()
+    // OI_Compass("NIFTY 50")
+    // Changes_in_Put_Call()
+    // update_chart()
     update_chart_set_interval()
 
     $('#col_barchart_name').text('Nifty 50 Open Interest Tracker');
+
+    fetch_data()
   });
   $("#bnknifty_btn").click(function () {
     $('#Candlestick_title').text('Nifty Bank')
     Index_OI_Change_data = 0;
     Change_PE_OI = 0;
     Change_CE_OI = 0;
-    CE_array_OI_Compass = [0,0]
-    PE_array_OI_Compass = [0,0]
-    x_axis_categories_OI_Compass = [0,0]
+    CE_array_OI_Compass = [0, 0]
+    PE_array_OI_Compass = [0, 0]
+    x_axis_categories_OI_Compass = [0, 0]
     OI_Compass_atm_Final = 0
-    CE_array = [0,0]
-    PE_array = [0,0]
+    CE_array = [0, 0]
+    PE_array = [0, 0]
     x_axis_categories = 0
     Open_Intrest_Tracker_atm = 0
-    PE_OI_total = 0 
+    PE_OI_total = 0
     CE_OI_total = 0
     Change_PE_OI = 0
     Change_CE_OI = 0
     $("#nifty_btn").removeClass("gb_active");
     $("#bnknifty_btn").addClass("gb_active");
     $("#finnifty_btn").removeClass("gb_active");
-    $("#Expiry").prop("selectedIndex", 0);
+    // $("#Expiry").prop("selectedIndex", 0);
 
-    call_Expiry_API("NIFTY BANK");
-    call_LIVE_OI_API("NIFTY BANK", Nifty_exp_1)
-    call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY BANK", Nifty_exp_1)
+    call_Expiry_API("NIFTY BANK", user, abc);
+    var x = $("#Expiry").prop("selectedIndex");
+    if ($("#bnknifty_btn").hasClass("gb_active") && x == 1) {
+      call_LIVE_OI_API("NIFTY BANK", Nifty_exp_2, user, abc)
+    } else if ($("#bnknifty_btn").hasClass("gb_active") && x == 0) {
+      call_LIVE_OI_API("NIFTY BANK", Nifty_exp_1, user, abc)
+    }
+    // call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY BANK", Nifty_exp_1)
     NIFTY_50_Open_Intrest_Tracker("NIFTY BANK")
-    OI_Compass("NIFTY BANK")
-    Changes_in_Put_Call()
-    update_chart()
+    // OI_Compass("NIFTY BANK")
+    // Changes_in_Put_Call()
+    // update_chart()
     update_chart_set_interval()
 
     $('#col_barchart_name').text('Banknifty Open Interest Tracker');
+    fetch_data()
   });
   $("#finnifty_btn").click(function () {
     $('#Candlestick_title').text('Nifty Fin Service')
     Index_OI_Change_data = 0;
     Change_PE_OI = 0;
     Change_CE_OI = 0;
-    CE_array_OI_Compass = [0,0]
-    PE_array_OI_Compass = [0,0]
-    x_axis_categories_OI_Compass = [0,0]
+    CE_array_OI_Compass = [0, 0]
+    PE_array_OI_Compass = [0, 0]
+    x_axis_categories_OI_Compass = [0, 0]
     OI_Compass_atm_Final = 0
-    CE_array = [0,0]
-    PE_array = [0,0]
+    CE_array = [0, 0]
+    PE_array = [0, 0]
     x_axis_categories = 0
     Open_Intrest_Tracker_atm = 0
-    PE_OI_total = 0 
+    PE_OI_total = 0
     CE_OI_total = 0
     Change_PE_OI = 0
     Change_CE_OI = 0
     $("#nifty_btn").removeClass("gb_active");
     $("#bnknifty_btn").removeClass("gb_active");
     $("#finnifty_btn").addClass("gb_active");
-    $("#Expiry").prop("selectedIndex", 0);
+    // $("#Expiry").prop("selectedIndex", 0);
 
-    call_Expiry_API("NIFTY FIN SERVICE");
-    call_LIVE_OI_API("NIFTY FIN SERVICE", Nifty_exp_1)
-    call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY FIN SERVICE", Nifty_exp_1)
+    call_Expiry_API("NIFTY FIN SERVICE", user, abc);
+    var x = $("#Expiry").prop("selectedIndex");
+    if ($("#finnifty_btn").hasClass("gb_active") && x == 1) {
+      call_LIVE_OI_API("NIFTY FIN SERVICE", Nifty_exp_2, user, abc)
+    } else if ($("#finnifty_btn").hasClass("gb_active") && x == 0) {
+      call_LIVE_OI_API("NIFTY FIN SERVICE", Nifty_exp_1, user, abc)
+    }
+    // call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY FIN SERVICE", Nifty_exp_1)
     NIFTY_50_Open_Intrest_Tracker("NIFTY FIN SERVICE")
-    OI_Compass("NIFTY FIN SERVICE")
-    Changes_in_Put_Call()
-    update_chart()
-    update_chart_set_interval() 
+    // OI_Compass("NIFTY FIN SERVICE")
+    // Changes_in_Put_Call()
+    // update_chart()
+    update_chart_set_interval()
 
     $('#col_barchart_name').text('Finnifty Open Interest Tracker');
+    fetch_data()
+  });
+  $("#unAuth_finnifty_btn").click(function () {
+    window.location.href = "https://tredcode.tradingcafeindia.com/dashboard/trade-with-tredcode";
   });
 
   //Expiry Change
   $("#Expiry").change(function () {
     var x = $("#Expiry").prop("selectedIndex");
     if ($("#nifty_btn").hasClass("gb_active") && x == 1) {
-      call_LIVE_OI_API("NIFTY 50", Nifty_exp_2)
-      call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY 50", Nifty_exp_2)
+      call_LIVE_OI_API("NIFTY 50", Nifty_exp_2, user, abc)
+      call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY 50", Nifty_exp_2, user, abc)
       NIFTY_50_Open_Intrest_Tracker("NIFTY 50")
       OI_Compass("NIFTY 50")
       Changes_in_Put_Call()
       update_chart()
       update_chart_set_interval()
     } else if ($("#nifty_btn").hasClass("gb_active") && x == 0) {
-      call_LIVE_OI_API("NIFTY 50", Nifty_exp_1)
-      call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY 50", Nifty_exp_1)
+      call_LIVE_OI_API("NIFTY 50", Nifty_exp_1, user, abc)
+      call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY 50", Nifty_exp_1, user, abc)
       NIFTY_50_Open_Intrest_Tracker("NIFTY 50")
       OI_Compass("NIFTY 50")
       Changes_in_Put_Call()
       update_chart()
       update_chart_set_interval()
     } else if ($("#bnknifty_btn").hasClass("gb_active") && x == 1) {
-      call_LIVE_OI_API("NIFTY BANK", Nifty_exp_2)
-      call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY BANK", Nifty_exp_2)
+      call_LIVE_OI_API("NIFTY BANK", Nifty_exp_2, user, abc)
+      call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY BANK", Nifty_exp_2, user, abc)
       NIFTY_50_Open_Intrest_Tracker("NIFTY BANK")
       OI_Compass("NIFTY BANK")
       Changes_in_Put_Call()
       update_chart()
       update_chart_set_interval()
     } else if ($("#bnknifty_btn").hasClass("gb_active") && x == 0) {
-      call_LIVE_OI_API("NIFTY BANK", Nifty_exp_1)
-      call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY BANK", Nifty_exp_1)
+      call_LIVE_OI_API("NIFTY BANK", Nifty_exp_1, user, abc)
+      call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY BANK", Nifty_exp_1, user, abc)
       NIFTY_50_Open_Intrest_Tracker("NIFTY BANK")
       OI_Compass("NIFTY BANK")
       Changes_in_Put_Call()
       update_chart()
       update_chart_set_interval()
     } else if ($("#finnifty_btn").hasClass("gb_active") && x == 1) {
-      call_LIVE_OI_API("NIFTY FIN SERVICE", Nifty_exp_2)
-      call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY FIN SERVICE", Nifty_exp_2)
+      call_LIVE_OI_API("NIFTY FIN SERVICE", Nifty_exp_2, user, abc)
+      call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY FIN SERVICE", Nifty_exp_2, user, abc)
       NIFTY_50_Open_Intrest_Tracker("NIFTY FIN SERVICE")
       OI_Compass("NIFTY FIN SERVICE")
       Changes_in_Put_Call()
       update_chart()
       update_chart_set_interval()
     } else if ($("#finnifty_btn").hasClass("gb_active") && x == 0) {
-      call_LIVE_OI_API("NIFTY FIN SERVICE", Nifty_exp_1)
-      call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY FIN SERVICE", Nifty_exp_1)
+      call_LIVE_OI_API("NIFTY FIN SERVICE", Nifty_exp_1, user, abc)
+      call_INDEX_OI_CHANGE_API(ts1, ts2, "NIFTY FIN SERVICE", Nifty_exp_1, user, abc)
       NIFTY_50_Open_Intrest_Tracker("NIFTY FIN SERVICE")
       OI_Compass("NIFTY FIN SERVICE")
       Changes_in_Put_Call()
@@ -991,27 +1080,27 @@ $(document).ready(function () {
   setInterval(() => {
     var x = $("#Expiry").prop("selectedIndex");
     if ($("#nifty_btn").hasClass("gb_active") && x == 1) {
-      call_LIVE_OI_API("NIFTY 50", Nifty_exp_2)
+      call_LIVE_OI_API("NIFTY 50", Nifty_exp_2, user, abc)
       NIFTY_50_Open_Intrest_Tracker("NIFTY 50")
       update_chart_set_interval()
     } else if ($("#nifty_btn").hasClass("gb_active") && x == 0) {
-      call_LIVE_OI_API("NIFTY 50", Nifty_exp_1)
+      call_LIVE_OI_API("NIFTY 50", Nifty_exp_1, user, abc)
       NIFTY_50_Open_Intrest_Tracker("NIFTY 50")
       update_chart_set_interval()
     } else if ($("#bnknifty_btn").hasClass("gb_active") && x == 1) {
-      call_LIVE_OI_API("NIFTY BANK", Nifty_exp_2)
+      call_LIVE_OI_API("NIFTY BANK", Nifty_exp_2, user, abc)
       NIFTY_50_Open_Intrest_Tracker("NIFTY BANK")
       update_chart_set_interval()
     } else if ($("#bnknifty_btn").hasClass("gb_active") && x == 0) {
-      call_LIVE_OI_API("NIFTY BANK", Nifty_exp_1)
+      call_LIVE_OI_API("NIFTY BANK", Nifty_exp_1, user, abc)
       NIFTY_50_Open_Intrest_Tracker("NIFTY BANK")
       update_chart_set_interval()
     } else if ($("#finnifty_btn").hasClass("gb_active") && x == 1) {
-      call_LIVE_OI_API("NIFTY FIN SERVICE", Nifty_exp_2)
+      call_LIVE_OI_API("NIFTY FIN SERVICE", Nifty_exp_2, user, abc)
       NIFTY_50_Open_Intrest_Tracker("NIFTY FIN SERVICE")
       update_chart_set_interval()
     } else if ($("#finnifty_btn").hasClass("gb_active") && x == 0) {
-      call_LIVE_OI_API("NIFTY FIN SERVICE", Nifty_exp_1)
+      call_LIVE_OI_API("NIFTY FIN SERVICE", Nifty_exp_1, user, abc)
       NIFTY_50_Open_Intrest_Tracker("NIFTY FIN SERVICE")
       update_chart_set_interval()
     }
